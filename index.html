@@ -1,8 +1,92 @@
 <!DOCTYPE html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<script src="libs/jquery/jquery-1.8.3.js"></script>
+
 <title>Mandarin Flash Cards</title>
+
+<style type="text/css">
+* {
+	margin: 0;
+	padding: 0;
+}
+
+#symbol {
+	font-size: 100px;
+	font-family: verdana, sans-serif;
+	text-align: center;
+	margin-top: 50px;
+}
+#pinyin, #english {
+	text-align: center;
+	font-family: verdana, sans-serif;
+	font-size: 18px;
+}
+</style>
+
 </head>
 
 <body>
+	<div id="symbol"></div>
+	<div id="pinyin"></div>
+	<div id="english"></div>
+
+<script type="text/javascript">
+var data = [];
+var currentIndex = -1;
+
+var loadNext = function() {
+	if (++currentIndex >= data.length * 2) {
+		currentIndex = 0;
+	}
+
+	var dataIndex = Math.floor(currentIndex / 2);
+
+	$('#symbol').html(data[dataIndex].symbol);
+	$('#pinyin').html(data[dataIndex].pinyin);
+	$('#english').html(data[dataIndex].english);
+
+	if (currentIndex % 2 == 0) {
+		$('#pinyin').hide();
+		$('#english').hide();
+	}
+	else {
+		$('#pinyin').show();
+		$('#english').show();
+	}
+}
+
+$.ajax({
+	url: 'data/chapter1.csv',
+	success: function(csv, textStatus, jqXHR) {
+		var lines = csv.split('\n');
+		var symbolData = lines[0].split('|');
+		var pinyinData = lines[1].split('|');
+		var englishData = lines[2].split('|');
+
+		var count = symbolData.length;
+
+		for (var i = 0; i < count; i++) {
+			data.push({
+				symbol: symbolData[i],
+				pinyin: pinyinData[i],
+				english: englishData[i]
+			});
+		}
+
+		$(function() {
+		  $(document).keydown(function(evt) {
+		    if (evt.keyCode == 32) {
+		      loadNext();
+		    }
+		  });
+		});
+
+		loadNext();
+	}
+})
+</script>
+
 </body>
+</html>
