@@ -2,91 +2,97 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
-<script src="libs/jquery/jquery-1.8.3.js"></script>
+<script src="libs/jquery/jquery-1.8.3.min.js"></script>
+<script src="libs/jquery-ui/js/jquery-ui-1.9.2.custom.min.js"></script>
+
+<script src="js/Application.js"></script>
+<script src="js/FlashCard.js"></script>
+<script src="js/DataProvider.js"></script>
+<script src="js/CsvDataProvider.js"></script>
 
 <title>Mandarin Flash Cards</title>
 
 <style type="text/css">
 * {
-	margin: 0;
-	padding: 0;
+    margin: 0;
+    padding: 0;
 }
 
-#symbol {
-	font-size: 100px;
-	font-family: verdana, sans-serif;
+body {
+	padding: 10px;
+    font-family: Verdana, sans-serif;
+}
+
+button {
+	padding: 10px;
+}
+
+#page_ChapterSelect {
 	text-align: center;
-	margin-top: 50px;
+}
+
+h1 {
+	font-size: 24px;
+	margin-bottom: 10px;
+}
+
+p {
+	font-size: 14px;
+	margin-bottom: 10px;
+}
+
+#chapters {
+    width: 650px;
+    height: 300px;
+    margin: 0 auto;
+}
+
+#chapters li {
+    padding: 10px 0;
+    width: 50px;
+    text-align: center;
+    float: left;
+    list-style-type: none;
+    border: 1px solid #666666;
+    margin: 5px;
+    background-color: #cccccc;
+    font-size: 18px;
+}
+
+#chapters .ui-selecting { background: #ffcc00; color: white; }
+#chapters .ui-selected { background: #ff9900; color: white; }
+
+#symbol {
+    font-size: 100px;
+    text-align: center;
+    margin-top: 50px;
 }
 #pinyin, #english {
-	text-align: center;
-	font-family: verdana, sans-serif;
-	font-size: 18px;
+    text-align: center;
+    font-size: 18px;
 }
 </style>
+
+<script type="text/javascript">
+$(function() {
+	MFC.Application.loadMenu();
+});
+</script>
 
 </head>
 
 <body>
-	<div id="symbol"></div>
-	<div id="pinyin"></div>
-	<div id="english"></div>
+    <div id="page_ChapterSelect">
+    	<h1>Select Chapter(s)</h1>
+    	<p>Choose the chapters you'd like to practice by drawing a box to select them.<br />You can also control/command click to select individual chapters.</p>
+        <ol id="chapters"></ol>
+        <button id="start">Thumbs up, let's do this!</button>
+    </div>
 
-<script type="text/javascript">
-var data = [];
-var currentIndex = -1;
+    <div id="page_FlashCards"></div>
 
-var loadNext = function() {
-	if (++currentIndex >= data.length * 2) {
-		currentIndex = 0;
-	}
-
-	var dataIndex = Math.floor(currentIndex / 2);
-
-	$('#symbol').html(data[dataIndex].symbol);
-	$('#pinyin').html(data[dataIndex].pinyin);
-	$('#english').html(data[dataIndex].english);
-
-	if (currentIndex % 2 == 0) {
-		$('#pinyin').hide();
-		$('#english').hide();
-	}
-	else {
-		$('#pinyin').show();
-		$('#english').show();
-	}
-}
-
-$.ajax({
-	url: 'data/chapter1.csv',
-	success: function(csv, textStatus, jqXHR) {
-		var lines = csv.split('\n');
-		var symbolData = lines[0].split('|');
-		var pinyinData = lines[1].split('|');
-		var englishData = lines[2].split('|');
-
-		var count = symbolData.length;
-
-		for (var i = 0; i < count; i++) {
-			data.push({
-				symbol: symbolData[i],
-				pinyin: pinyinData[i],
-				english: englishData[i]
-			});
-		}
-
-		$(function() {
-		  $(document).keydown(function(evt) {
-		    if (evt.keyCode == 32) {
-		      loadNext();
-		    }
-		  });
-		});
-
-		loadNext();
-	}
-})
-</script>
-
+    <div id="symbol"></div>
+    <div id="pinyin"></div>
+    <div id="english"></div>
 </body>
 </html>
